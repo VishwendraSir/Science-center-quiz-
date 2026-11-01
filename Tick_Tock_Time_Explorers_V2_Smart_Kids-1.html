@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3926a8">
+<title>Tick-Tock Time Explorers V2 Smart Kids | Science Centre Learning Hub</title>
+<style>
+:root{--navy:#17134b;--purple:#5638d5;--blue:#2787e8;--pink:#ff6f91;--yellow:#ffd65a;--mint:#4bd5b0;--paper:#f6f5ff;--ink:#24204e}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(145deg,#eeeaff,#e7f8ff);color:var(--ink)}
+header{background:linear-gradient(110deg,#21185f,#5b35cf);color:white;padding:16px 18px 20px;border-radius:0 0 26px 26px;box-shadow:0 8px 24px #30207833}
+.brand{font-size:12px;letter-spacing:1.4px;font-weight:800;opacity:.9}.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px}h1{font-size:clamp(23px,5vw,32px);margin:7px 0 3px}.sub{opacity:.85;font-size:13px}
+.pill{border:1px solid #ffffff55;background:#ffffff1c;color:white;border-radius:30px;padding:8px 11px;font-weight:700}
+main{max-width:1000px;margin:auto;padding:16px}.tabs{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.tab{border:0;border-radius:14px;padding:11px 14px;background:white;color:#453b85;font-weight:800;white-space:nowrap;box-shadow:0 3px 10px #3926a811}.tab.active{background:var(--purple);color:white}
+.panel{background:white;border-radius:22px;padding:16px;margin:10px 0;box-shadow:0 8px 24px #29206c12}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.hero{background:linear-gradient(130deg,#fff4c7,#ffe7ee);border-radius:20px;padding:16px}.hero h2{margin:0 0 6px}.muted{color:#777398;font-size:13px}.clockwrap{display:grid;place-items:center;padding:12px}.clock{width:min(76vw,330px);height:min(76vw,330px);border-radius:50%;position:relative;background:radial-gradient(circle at 35% 28%,#fff,#f0edff);border:12px solid #4933b8;box-shadow:inset 0 0 0 5px #d8d1ff,0 10px 25px #35268b33;touch-action:none;user-select:none}
+.tick{position:absolute;width:3px;height:12px;background:#a59bdc;left:calc(50% - 1.5px);top:7px;transform-origin:50% 153px}.num{position:absolute;transform:translate(-50%,-50%);font-size:clamp(17px,4vw,23px);font-weight:900;color:#32267e}
+.hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:10px;pointer-events:none}.hour{height:27%;width:9px;background:#ff668d;z-index:3}.minute{height:39%;width:6px;background:#2586e8;z-index:4}.second{height:43%;width:3px;background:#f3b900;z-index:5}.pin{position:absolute;left:50%;top:50%;width:17px;height:17px;border-radius:50%;background:#3926a8;transform:translate(-50%,-50%);z-index:6}
+.timebig{font-size:34px;font-weight:950;text-align:center;color:#33218e;font-variant-numeric:tabular-nums}.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}.btn{border:0;border-radius:13px;padding:11px 15px;background:var(--purple);color:white;font-weight:850;cursor:pointer}.btn.alt{background:#eae7ff;color:#40328f}.btn.green{background:#18a77e}.btn.orange{background:#ffad36;color:#38224e}.btn:active{transform:scale(.98)}
+input,select{border:1px solid #d8d2f4;border-radius:12px;padding:10px;background:#fff;color:var(--ink);font:inherit;max-width:100%}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.stat{background:#f4f1ff;border-radius:15px;padding:12px;text-align:center;flex:1;min-width:90px}.stat b{display:block;font-size:23px;color:#4d35c2}.question{font-size:23px;font-weight:900;text-align:center;margin:10px}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.answer{border:2px solid #e2ddfa;background:#faf9ff;padding:14px;border-radius:14px;font-size:20px;font-weight:900;color:#40338d}.answer.correct{background:#dff9ee;border-color:#35bd8c}.answer.wrong{background:#ffe5eb;border-color:#f47d99}
+.hidden{display:none!important}.feedback{text-align:center;font-weight:800;min-height:26px;margin:8px}.lesson{padding:12px;background:#f7f5ff;border-radius:14px}.lesson strong{color:#4d35c2}.footer{text-align:center;padding:20px;color:#79749c;font-size:12px}
+.progress{height:10px;background:#ece9fb;border-radius:10px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,#4bd5b0,#2787e8);width:0}
+@media(max-width:500px){main{padding:11px}.panel{padding:13px}.clock{width:min(82vw,310px);height:min(82vw,310px)}.tick{transform-origin:50% calc(min(82vw,310px)/2 - 20px)}}
+
+body.theme-ocean{background:linear-gradient(145deg,#e5f7ff,#e6f2ff)}body.theme-ocean .clock{border-color:#1676b9}
+body.theme-sunshine{background:linear-gradient(145deg,#fff7d9,#ffe8c7)}body.theme-sunshine .clock{border-color:#e7a900}
+body.theme-mint{background:linear-gradient(145deg,#e5fff4,#e8f7ef)}body.theme-mint .clock{border-color:#159b78}
+body.theme-night{background:linear-gradient(145deg,#171a3e,#30345f);color:#f6f4ff}body.theme-night .panel{background:#292d58;color:#fff}body.theme-night .stat{background:#3b4072;color:#fff}body.theme-night .lesson{background:#383d70}body.theme-night .muted{color:#c5c5e8}
+</style>
+</head>
+<body>
+<header><div class="headrow"><div><div class="brand">SCIENCE CENTRE LEARNING HUB</div><h1>⏰ Tick-Tock Time Explorers</h1><div class="sub">Guided by Vishwendra Sir • Learn • Play • Master Time</div></div><button class="pill" id="langTop">हिंदी / EN</button></div></header>
+<main>
+<div class="tabs">
+<button class="tab active" data-tab="learn">🕒 Learn</button><button class="tab" data-tab="practice">🎯 Practice</button><button class="tab" data-tab="challenge">🏆 Challenge</button><button class="tab" data-tab="voice">🔊 Voice Studio</button><button class="tab" data-tab="progress">📊 My Progress</button><button class="tab" data-tab="parent">👨‍👩‍👧 Parent</button>
+</div>
+<section id="learn" class="page">
+<div class="panel">
+ <div class="row"><label for="studentName"><b>Student name / विद्यार्थी का नाम</b></label><input id="studentName" maxlength="24" placeholder="Enter name"></div>
+ <div class="row" style="margin-top:10px"><label for="profileSelect">Saved profile</label><select id="profileSelect"><option value="default">Default student</option></select><button class="btn alt" id="saveProfile">Save profile</button></div>
+ <div class="row" style="margin-top:10px"><label for="clockTheme">Clock theme</label><select id="clockTheme"><option value="purple">Royal Purple</option><option value="ocean">Ocean Blue</option><option value="sunshine">Sunshine</option><option value="mint">Mint Fresh</option><option value="night">Night Sky</option></select><label><input type="checkbox" id="soundToggle" checked> Sound effects</label></div>
+</div>
+<div class="hero"><h2 id="welcome">Hello, Time Explorer! 🌟</h2><div id="intro">Move the clock hands and discover how time works.</div></div>
+<div class="grid">
+<div class="panel">
+<div class="clockwrap"><div class="clock" id="clock" aria-label="Interactive analog clock"><div id="ticks"></div><div id="nums"></div><div class="hand hour" id="hourHand"></div><div class="hand minute" id="minuteHand"></div><div class="hand second" id="secondHand"></div><div class="pin"></div></div></div>
+<div class="timebig" id="digital">03:00</div>
+<div class="controls"><button class="btn alt" id="minus">− 5 min</button><button class="btn" id="plus">+ 5 min</button><button class="btn orange" id="random">Random time</button></div>
+<div class="controls"><button class="btn green" id="speakTime">🔊 Read time</button><button class="btn alt" id="now">Set current time</button></div>
+</div>
+<div class="panel">
+<h3>📚 Time Learning Lab</h3>
+<div class="lesson"><strong>Hour hand / घंटे की सुई</strong><p>Short hand tells the hour. छोटी सुई घंटा बताती है।</p></div>
+<div class="lesson"><strong>Minute hand / मिनट की सुई</strong><p>Long hand tells the minutes. बड़ी सुई मिनट बताती है।</p></div>
+<div class="lesson"><strong>Remember / याद रखें</strong><p>1 hour = 60 minutes<br>आधा घंटा = 30 मिनट<br>Quarter hour = 15 minutes</p></div>
+<label for="level">Learning level</label><br><select id="level"><option>Beginner</option><option>Explorer</option><option>Time Master</option></select>
+<p class="muted">Tip: Drag the blue minute hand or pink hour hand around the clock.</p>
+</div></div>
+</section>
+<section id="practice" class="page hidden">
+<div class="panel"><h2>🎯 Practice Arena</h2><div class="row"><span class="pill" style="background:#eeeaff;color:#4933a6" id="round">Question 1 / 10</span><span class="pill" style="background:#e3fff4;color:#16795c" id="practiceScore">⭐ 0</span></div>
+<div class="clockwrap"><div class="clock" id="quizClock"><div id="qTicks"></div><div id="qNums"></div><div class="hand hour" id="qHour"></div><div class="hand minute" id="qMinute"></div><div class="hand second" id="qSecond"></div><div class="pin"></div></div></div>
+<div class="question" id="question">What time is shown?</div><div class="answers" id="answers"></div><div class="feedback" id="feedback"></div><div class="progress"><span id="bar"></span></div><div class="controls"><button class="btn" id="nextQ">Next Question ➜</button></div></div>
+</section>
+<section id="challenge" class="page hidden">
+<div class="panel"><h2>🏆 Time Challenge</h2><p>Read the time aloud or choose the correct digital time. Complete 10 questions to earn a badge.</p><div class="grid"><div class="stat"><b id="challengeBest">0</b>Best score</div><div class="stat"><b id="stars">0</b>⭐ Stars</div><div class="stat"><b id="badge">—</b>Badge</div></div><div class="controls"><button class="btn orange" id="startChallenge">Start 60-second challenge</button></div><div class="timebig" id="timer">01:00</div><div class="question" id="challengeQuestion">Ready?</div><div class="answers" id="challengeAnswers"></div><div class="feedback" id="challengeFeedback"></div></div>
+</section>
+<section id="voice" class="page hidden">
+<div class="panel"><h2>🔊 Voice Studio</h2><p>Listen to lessons and time readings. Voice availability depends on your device/browser.</p><div class="row"><label>Language</label><select id="voiceLang"><option value="both">Hindi + English</option><option value="hi-IN">Hindi</option><option value="en-US">English</option></select></div><div class="row" style="margin-top:12px"><label>Voice</label><select id="voiceChoice"><option value="">Default device voice</option></select></div><p>Speed: <b id="speedLabel">1.0×</b></p><input type="range" id="speed" min=".6" max="1.5" step=".1" value="1" style="width:100%"><div class="controls"><button class="btn" id="lessonSpeak">▶ Play lesson</button><button class="btn alt" id="stopVoice">■ Stop</button></div></div>
+</section>
+<section id="parent" class="page hidden">
+<div class="panel"><h2>👨‍👩‍👧 Parent Dashboard</h2><p class="muted">On-device learning report. No account or cloud upload.</p>
+<div class="grid"><div class="stat"><b id="parentStudent">—</b>Student</div><div class="stat"><b id="parentAccuracy">0%</b>Accuracy</div><div class="stat"><b id="parentStars">0</b>Stars</div><div class="stat"><b id="parentBadge">Beginner</b>Achievement</div></div>
+<h3>Learning recommendations</h3><ul id="recommendations"><li>Complete a practice round to receive suggestions.</li></ul>
+<div class="controls"><button class="btn" id="certificate">🎓 Print certificate</button><button class="btn alt" id="parentRefresh">Refresh report</button></div></div>
+<div class="panel"><h3>Privacy note</h3><p>Progress is stored in this browser only. Clearing browser data may remove it. This is not a secure parental lock.</p></div>
+</section>
+<section id="progress" class="page hidden">
+<div class="panel"><h2>📊 My Progress</h2><div class="grid"><div class="stat"><b id="totalAnswered">0</b>Answered</div><div class="stat"><b id="totalCorrect">0</b>Correct</div><div class="stat"><b id="accuracy">0%</b>Accuracy</div><div class="stat"><b id="totalStars">0</b>Stars</div></div><h3>Learning progress</h3><div class="progress"><span id="overallBar"></span></div><p id="progressMessage">Start practicing to build your progress.</p><div class="controls"><button class="btn alt" id="resetProgress">Reset progress</button></div><p class="muted">Progress is saved on this device only. No account or server is required.</p></div>
+</section>
+<div class="footer">© Science Centre Learning Hub • Made for curious young minds 💜<br>Works offline after the page has been saved and opened on your device.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let h=3,m=0,s=0,lang='both',answered=0,correct=0,stars=Number(localStorage.timeStars||0),qIndex=0,qScore=0,qTime={h:4,m:25},challengeScore=0,challengeTimer=null,challengeLeft=60;
+function setClock(H,M){h=(H+24)%24;m=(M+60)%60;drawClock()}
+function drawClock(){let degM=m*6,degH=(h%12)*30+m*.5;$('hourHand').style.transform=`translateX(-50%) rotate(${degH}deg)`;$('minuteHand').style.transform=`translateX(-50%) rotate(${degM}deg)`;$('secondHand').style.transform=`translateX(-50%) rotate(${s*6}deg)`;$('digital').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`}
+function makeFace(ticks,nums){for(let i=0;i<60;i++){let d=document.createElement('div');d.className='tick';d.style.transform=`rotate(${i*6}deg)`;d.style.height=i%5===0?'15px':'7px';d.style.background=i%5===0?'#7f72c8':'#bdb6e6';ticks.appendChild(d)}for(let i=1;i<=12;i++){let a=i*Math.PI/6-Math.PI/2,r=39,el=document.createElement('div');el.className='num';el.textContent=i;el.style.left=(50+r*Math.cos(a))+'%';el.style.top=(50+r*Math.sin(a))+'%';nums.appendChild(el)}}
+makeFace($('ticks'),$('nums'));makeFace($('qTicks'),$('qNums'));
+function say(text,language){if(!('speechSynthesis'in window)){alert('Speech is not supported in this browser.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang=language||($('voiceLang')?.value==='hi-IN'?'hi-IN':'en-US');u.rate=Number($('speed')?.value||1);let v=$('voiceChoice')?.value;if(v){let voice=speechSynthesis.getVoices().find(x=>x.name===v);if(voice)u.voice=voice}speechSynthesis.speak(u)}
+function timeText(){let mm=String(m).padStart(2,'0');return lang==='hi'?'समय '+(h%12||12)+' बजकर '+m+' मिनट है।':`The time is ${h%12||12}:${mm}.`}
+$('plus').onclick=()=>setClock(h,m+5);$('minus').onclick=()=>setClock(h,m-5);$('random').onclick=()=>setClock(Math.floor(Math.random()*12),Math.floor(Math.random()*12)*5);$('now').onclick=()=>{let d=new Date();setClock(d.getHours(),d.getMinutes())};$('speakTime').onclick=()=>say(timeText());
+let drag=null;function handDrag(e){let rect=$('clock').getBoundingClientRect(),x=e.clientX-rect.left-rect.width/2,y=e.clientY-rect.top-rect.height/2,angle=(Math.atan2(x,-y)*180/Math.PI+360)%360;if(drag==='minute'){let nm=Math.round(angle/6)%60;setClock(h,nm)}else if(drag==='hour'){let nh=Math.round(angle/30)%12;setClock(nh,m)}}
+$('clock').addEventListener('pointerdown',e=>{let r=$('clock').getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;drag=Math.hypot(x,y)>r.width*.32?'minute':'hour';$('clock').setPointerCapture(e.pointerId);handDrag(e)});$('clock').addEventListener('pointermove',e=>{if(drag)handDrag(e)});$('clock').addEventListener('pointerup',()=>drag=null);
+function makeQuestion(){qTime={h:Math.floor(Math.random()*12),m:Math.floor(Math.random()*12)*5};$('qHour').style.transform=`translateX(-50%) rotate(${qTime.h*30+qTime.m*.5}deg)`;$('qMinute').style.transform=`translateX(-50%) rotate(${qTime.m*6}deg)`;$('question').textContent='What time is shown? / घड़ी में कितना समय है?';let opts=new Set([`${String(qTime.h||12).padStart(2,'0')}:${String(qTime.m).padStart(2,'0')}`]);while(opts.size<4){let a=Math.floor(Math.random()*12),b=Math.floor(Math.random()*12)*5;opts.add(`${String(a||12).padStart(2,'0')}:${String(b).padStart(2,'0')}`)}let arr=[...opts].sort(()=>Math.random()-.5);$('answers').innerHTML='';arr.forEach(v=>{let b=document.createElement('button');b.className='answer';b.textContent=v;b.onclick=()=>answer(b,v);$('answers').appendChild(b)});$('round').textContent=`Question ${qIndex+1} / 10`; $('feedback').textContent='';$('nextQ').disabled=true}
+function answer(btn,v){if($('nextQ').disabled===false)return;answered++;let target=`${String(qTime.h||12).padStart(2,'0')}:${String(qTime.m).padStart(2,'0')}`;if(v===target){correct++;qScore++;stars++;btn.classList.add('correct');$('feedback').textContent='🌟 Excellent! सही जवाब!';}else{btn.classList.add('wrong');$('feedback').textContent='Good try! सही उत्तर '+target+' था।';[...$('answers').children].forEach(b=>{if(b.textContent===target)b.classList.add('correct')})}localStorage.timeStars=stars;[...$('answers').children].forEach(b=>b.disabled=true);$('practiceScore').textContent='⭐ '+qScore;$('nextQ').disabled=false;updateProgress()}
+$('nextQ').onclick=()=>{qIndex++;if(qIndex>=10){$('question').textContent=`Practice complete! Score: ${qScore}/10 🏆`;$('answers').innerHTML='';$('nextQ').textContent='Play again';$('nextQ').onclick=()=>{qIndex=0;qScore=0;$('nextQ').textContent='Next Question ➜';$('nextQ').onclick=nextQuestion;nextQuestion()};return}makeQuestion()};function nextQuestion(){makeQuestion();$('nextQ').disabled=true}makeQuestion();
+function updateProgress(){$('totalAnswered').textContent=answered;$('totalCorrect').textContent=correct;$('accuracy').textContent=(answered?Math.round(correct/answered*100):0)+'%';$('totalStars').textContent=stars;$('stars').textContent=stars;$('overallBar').style.width=Math.min(100,answered*10)+'%';$('progressMessage').textContent=answered?`You have answered ${answered} questions. Keep learning!`:'Start practicing to build your progress.';$('challengeBest').textContent=localStorage.challengeBest||0;$('badge').textContent=stars>=30?'Time Hero 🥇':stars>=10?'Clock Explorer 🥈':'Beginner';}
+$('resetProgress').onclick=()=>{if(confirm('Reset saved progress on this device?')){answered=correct=stars=0;localStorage.timeStars=0;updateProgress()}};updateProgress();
+function challengeQuestion(){let a=Math.floor(Math.random()*12),b=Math.floor(Math.random()*12)*5,target=`${String(a||12).padStart(2,'0')}:${String(b).padStart(2,'0')}`;$('challengeQuestion').textContent='Choose the time: '+target;let arr=new Set([target]);while(arr.size<4){let x=Math.floor(Math.random()*12),y=Math.floor(Math.random()*12)*5;arr.add(`${String(x||12).padStart(2,'0')}:${String(y).padStart(2,'0')}`)}$('challengeAnswers').innerHTML='';[...arr].sort(()=>Math.random()-.5).forEach(v=>{let btt=document.createElement('button');btt.className='answer';btt.textContent=v;btt.onclick=()=>{if(v===target){challengeScore++;stars++;$('challengeFeedback').textContent='Correct! ⭐'}else $('challengeFeedback').textContent='Try again next time!';$('challengeFeedback').textContent+=' Score: '+challengeScore;localStorage.timeStars=stars;updateProgress();challengeQuestion()};$('challengeAnswers').appendChild(btt)})}
+$('startChallenge').onclick=()=>{clearInterval(challengeTimer);challengeScore=0;challengeLeft=60;$('timer').textContent='01:00';$('challengeFeedback').textContent='Go!';challengeQuestion();challengeTimer=setInterval(()=>{challengeLeft--;$('timer').textContent='00:'+String(challengeLeft).padStart(2,'0');if(challengeLeft<=0){clearInterval(challengeTimer);let best=Number(localStorage.challengeBest||0);if(challengeScore>best)localStorage.challengeBest=challengeScore;$('challengeFeedback').textContent=`Time up! Final score: ${challengeScore}`;updateProgress()}},1000)};
+$('lessonSpeak').onclick=()=>say('The short hand shows the hour. The long hand shows the minutes. One hour has sixty minutes. Half an hour has thirty minutes. छोटी सुई घंटा बताती है। बड़ी सुई मिनट बताती है। एक घंटे में साठ मिनट होते हैं।','en-US');$('stopVoice').onclick=()=>speechSynthesis.cancel();$('speed').oninput=e=>$('speedLabel').textContent=Number(e.target.value).toFixed(1)+'×';
+function loadVoices(){let vs=speechSynthesis.getVoices();$('voiceChoice').innerHTML='<option value="">Default device voice</option>';vs.forEach(v=>{let o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';$('voiceChoice').appendChild(o)})}if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));$(t.dataset.tab).classList.remove('hidden')});
+$('langTop').onclick=()=>{lang=lang==='both'?'hi':lang==='hi'?'en':'both';$('welcome').textContent=lang==='hi'?'नमस्ते समय खोजकर्ता! 🌟':'Hello, Time Explorer! 🌟';$('intro').textContent=lang==='hi'?'घड़ी की सुइयाँ चलाएँ और समय सीखें।':'Move the clock hands and discover how time works.'};
+</script>
+
+<script>
+const V2KEY='ttex_profiles_v2';
+function profiles(){try{return JSON.parse(localStorage.getItem(V2KEY)||'{}')}catch(e){return {}}}
+function persistProfile(){let ps=profiles(),id=$('profileSelect').value||'default';ps[id]={name:$('studentName').value.trim()||'Student',answered,correct,stars};localStorage.setItem(V2KEY,JSON.stringify(ps));parentReport()}
+function loadProfiles(){let ps=profiles(),sel=$('profileSelect'),cur=sel.value||'default';sel.innerHTML='';if(!Object.keys(ps).length)ps.default={name:'Default student',answered:0,correct:0,stars:0};Object.entries(ps).forEach(([id,v])=>{let o=document.createElement('option');o.value=id;o.textContent=v.name||id;sel.appendChild(o)});sel.value=ps[cur]?cur:Object.keys(ps)[0];let v=ps[sel.value];$('studentName').value=v.name||'';answered=v.answered||0;correct=v.correct||0;stars=v.stars||0;localStorage.timeStars=stars;updateProgress()}
+$('saveProfile').onclick=()=>{let n=$('studentName').value.trim();if(!n){alert('Enter student name first');return}let id='student_'+n.toLowerCase().replace(/[^a-z0-9]+/g,'_');let ps=profiles();ps[id]={name:n,answered,correct,stars};localStorage.setItem(V2KEY,JSON.stringify(ps));loadProfiles();$('profileSelect').value=id;parentReport();tone(680)};
+$('profileSelect').onchange=()=>{loadProfiles();parentReport()};
+function tone(f){if(!$('soundToggle').checked)return;try{let C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.value=.06;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.12);o.onended=()=>c.close()}catch(e){}}
+$('clockTheme').onchange=e=>{document.body.classList.remove('theme-ocean','theme-sunshine','theme-mint','theme-night');if(e.target.value!=='purple')document.body.classList.add('theme-'+e.target.value);localStorage.clockTheme=e.target.value};
+if(localStorage.clockTheme){$('clockTheme').value=localStorage.clockTheme;$('clockTheme').dispatchEvent(new Event('change'))}
+function parentReport(){if(!$('parentStudent'))return;let a=answered?Math.round(correct/answered*100):0;$('parentStudent').textContent=$('studentName').value||'Student';$('parentAccuracy').textContent=a+'%';$('parentStars').textContent=stars;$('parentBadge').textContent=stars>=30?'Time Hero':stars>=10?'Clock Explorer':'Beginner';let tips=[];if(answered<10)tips.push('Complete a 10-question practice round.');if(a<70&&answered>=5)tips.push('Revise hour and minute hands.');if(a>=70)tips.push('Excellent! Try the next learning level.');$('recommendations').innerHTML='';tips.forEach(t=>{let li=document.createElement('li');li.textContent=t;$('recommendations').appendChild(li)})}
+$('parentRefresh').onclick=parentReport;
+$('certificate').onclick=()=>{let n=$('studentName').value||'Time Explorer',a=answered?Math.round(correct/answered*100):0,w=window.open('','_blank');if(!w){alert('Allow pop-ups to print certificate');return}let safe=n.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));w.document.write(`<html><head><title>Achievement Certificate</title><style>body{text-align:center;font-family:Georgia;padding:40px;color:#332477}.frame{border:12px double #6045c4;padding:40px}h1{font-size:38px}h2{font-size:30px}</style></head><body><div class="frame"><h3>SCIENCE CENTRE LEARNING HUB</h3><h1>Certificate of Achievement</h1><p>This is proudly presented to</p><h2>${safe}</h2><p>for learning to read the clock!</p><p>Questions: ${answered} | Accuracy: ${a}% | Stars: ${stars} ⭐</p><p>Guided by Vishwendra Sir</p></div><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()};
+const oldAnswerV2=answer;answer=function(btn,v){oldAnswerV2(btn,v);tone(v===`${String(qTime.h||12).padStart(2,'0')}:${String(qTime.m).padStart(2,'0')}`?850:250);persistProfile()};
+const oldUpdateV2=updateProgress;updateProgress=function(){oldUpdateV2();parentReport()};
+$('langTop').addEventListener('click',()=>tone(720));
+loadProfiles();parentReport();
+</script>
+
+</body></html>

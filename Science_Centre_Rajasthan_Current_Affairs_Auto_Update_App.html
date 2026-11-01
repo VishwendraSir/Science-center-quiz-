@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#10285f" />
+  <title>KQRO Rajasthan Current Affairs Portal</title>
+  <style>
+    :root {
+      --navy:#10285f; --blue:#1e63c5; --purple:#6741b8; --gold:#ffd447; --ink:#18233e;
+      --muted:#66748e; --bg:#f3f6fc; --line:#dce5f2; --green:#16834b; --red:#c23b45;
+      --panel:#fff; --shadow:0 5px 18px rgba(16,40,95,0.08);
+    }
+    * { box-sizing:border-box; }
+    html, body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
+    body { min-height:100vh; }
+    header { background:linear-gradient(125deg,#0b1b45,#1b5db2); color:#fff; border-bottom:5px solid var(--gold); }
+    .wrap { max-width:1100px; margin:auto; padding:20px 14px 24px; }
+    .brand { font-weight:900; letter-spacing:.04em; font-size:clamp(1.15rem,4vw,1.8rem); }
+    .tag { color:#ffe58a; font-weight:800; font-size:.9rem; margin-top:3px; }
+    h1 { font-size:clamp(1.5rem,4vw,2.3rem); margin:16px 0 4px; }
+    .sub { color:#e3edff; margin:0; }
+    main { max-width:1100px; margin:18px auto; padding:0 14px 24px; }
+    .stats { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+    .stat, .panel, .qcard { background:var(--panel); border:1px solid var(--line); border-radius:17px; padding:16px; box-shadow:var(--shadow); margin-bottom:14px; }
+    .stat strong { display:block; font-size:1.45rem; color:var(--blue); }
+    .stat span { font-size:.83rem; color:var(--muted); }
+    .controls { display:grid; grid-template-columns:2fr 1fr 1fr; gap:9px; margin:12px 0; }
+    input, select, button { font:inherit; border-radius:11px; padding:11px; border:1px solid #cbd7e8; background:#fff; color:var(--ink); min-width:0; }
+    button { cursor:pointer; font-weight:750; }
+    .primary { background:var(--blue); color:#fff; border:0; }
+    .dark { background:var(--navy); color:#fff; border:0; }
+    .gold { background:var(--gold); color:#17233e; border:0; }
+    .muted { color:var(--muted); font-size:.84rem; }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .qhead { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; color:var(--muted); font-size:.84rem; }
+    .qtext { font-size:1.08rem; font-weight:800; margin:10px 0; }
+    .en { font-size:.94rem; color:#4f5d76; margin:4px 0 12px; }
+    .opt { display:block; width:100%; text-align:left; margin:7px 0; padding:12px; border:1px solid var(--line); background:#f9fbff; border-radius:12px; }
+    .opt.selected { border:2px solid var(--blue); background:#edf4ff; }
+    .opt.correct { border:2px solid var(--green); background:#edfff4; }
+    .opt.wrong { border:2px solid var(--red); background:#fff1f1; }
+    .feedback { display:none; padding:12px; border-radius:12px; background:#fff7dc; margin-top:10px; }
+    .feedback.show { display:block; }
+    .answer { color:var(--green); font-weight:850; }
+    .explain { margin-top:7px; }
+    .pill { display:inline-block; padding:3px 9px; border-radius:30px; background:#eef2ff; color:#4c3b91; font-size:.78rem; font-weight:800; }
+    .footer { text-align:center; padding:25px 14px; color:var(--muted); font-size:.85rem; }
+    @media (max-width:650px){ .controls { grid-template-columns:1fr 1fr; } .controls input { grid-column:1/-1; } .stats { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="brand">KQRO • SCIENCE CENTRE LEARNING HUB</div>
+      <div class="tag">RAJASTHAN CURRENT AFFAIRS PORTAL</div>
+      <h1>राजस्थान करेंट अफेयर्स • Auto Update Quiz</h1>
+      <p class="sub">May–October 2026 • Bilingual MCQs • Explanation • Source review</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="stats">
+      <div class="stat"><strong id="total">0</strong><span>कुल प्रश्न / Total questions</span></div>
+      <div class="stat"><strong id="shown">0</strong><span>फिल्टर में / Filtered</span></div>
+      <div class="stat"><strong id="updated">Bundled</strong><span>डेटा स्थिति / Data status</span></div>
+    </section>
+
+    <section class="panel">
+      <b>डेटा नियंत्रण / Data controls</b>
+      <p class="muted">यह फाइल मौजूदा उपलब्ध JSON सामग्री के साथ चलती है। ऑनलाइन Auto-update के लिए नीचे अपने GitHub Pages या JSON feed URL जोड़ें। URL उपलब्ध न होने पर यह bundled data और offline mode में काम करेगी।</p>
+      <div class="controls">
+        <input id="feedUrl" placeholder="Published JSON feed URL (optional)" />
+        <button class="primary" id="refresh">अब अपडेट जाँचें / Check update</button>
+        <select id="language">
+          <option value="both">Hindi + English</option>
+          <option value="hi">Hindi only</option>
+          <option value="en">English only</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="dark" id="export">Export current JSON</button>
+        <button id="importBtn">Import JSON</button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden />
+        <button id="reset">Reset bundled data</button>
+      </div>
+      <p class="muted" id="status" aria-live="polite">Offline-ready bundled dataset loaded. No external library required.</p>
+    </section>
+
+    <section class="panel">
+      <b>प्रश्न खोजें / Find questions</b>
+      <div class="controls">
+        <input id="search" placeholder="प्रश्न या keyword खोजें / Search" />
+        <select id="month">
+          <option value="">All months</option>
+          <option>May 2026</option>
+          <option>June 2026</option>
+          <option>July 2026</option>
+          <option>August 2026</option>
+          <option>September 2026</option>
+          <option>October 2026</option>
+        </select>
+        <select id="mode">
+          <option value="all">All questions</option>
+          <option value="unanswered">Unanswered</option>
+          <option value="answered">Answered</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button class="primary" id="shuffle">Random practice</button>
+        <button id="clear">Clear filters</button>
+        <button class="gold" id="speak">🔊 Read question</button>
+      </div>
+    </section>
+
+    <div id="questions"></div>
+
+    <div class="actions" style="justify-content:center;margin:16px 0;">
+      <button id="prev">← Previous</button>
+      <span class="pill" id="page">1 / 1</span>
+      <button id="next">Next →</button>
+    </div>
+  </main>
+
+  <footer class="footer">KQRO • SCIENCE CENTRE LEARNING HUB • Guided by Vishwendra Sir<br>Data is labelled as supplied in source files; pending or limited verification must not be treated as independently verified.</footer>
+
+  <script>
+    const BUNDLED = [
+      {
+        id: 'KQRO-RAJ-01',
+        month: 'May 2026',
+        hi: 'राजस्थान के recent administrative developments में किस सेक्टर को सबसे अधिक प्राथमिकता मिली?',
+        en: 'Which sector received the highest priority in recent Rajasthan administrative developments?',
+        options: ['Education', 'Water Supply', 'Transport', 'Tourism'],
+        answer: 'Water Supply',
+        explain_hi: 'पानी, जल जीवन, और infra-related programmes को राज्य की प्राथमिकता में रखा गया है।',
+        explain_en: 'Water supply and related infrastructure programmes were a major state priority.',
+        source: 'Rajasthan Government / State updates',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      },
+      {
+        id: 'KQRO-RAJ-02',
+        month: 'June 2026',
+        hi: 'राजस्थान सरकार ने कैसे विकास को बढ़ाने के लिए digital governance का उपयोग किया?',
+        en: 'How did Rajasthan promote digital governance for development?',
+        options: ['By removing all field offices', 'By digitising public services and approvals', 'By reducing all school budgets', 'By reducing state reporting'],
+        answer: 'By digitising public services and approvals',
+        explain_hi: 'राजस्थान ने सार्वजनिक सेवाओं तथा अनुमोदनों को डिजिटल तरीके से बेहतर बनाने पर जोर दिया।',
+        explain_en: 'The state emphasized digital public services and streamlined approvals.',
+        source: 'State digital service updates',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      },
+      {
+        id: 'KQRO-RAJ-03',
+        month: 'July 2026',
+        hi: 'पोलियो या public health alert में राजस्थान ने मुख्य रूप से किस चीज पर ध्यान दिया?',
+        en: 'What was the main focus in Rajasthan public health alerts?',
+        options: ['Public vaccination coverage', 'Luxury tourism', 'Import policy', 'Rail corridor design'],
+        answer: 'Public vaccination coverage',
+        explain_hi: 'स्वास्थ्य कार्यक्रमों में टीकाकरण और स्वास्थ्य जागरूकता मुख्य मुद्दा रहा।',
+        explain_en: 'Vaccination and health awareness remained the central focus of public health campaigns.',
+        source: 'Health department notices',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      },
+      {
+        id: 'KQRO-RAJ-04',
+        month: 'August 2026',
+        hi: 'राजस्थान में irrigation और farm uplift measures का प्रमुख उद्देश्य क्या था?',
+        en: 'What was the main purpose of irrigation and farm uplift measures?',
+        options: ['Reduce urban pollution', 'Improve agricultural sustainability', 'Increase petrol prices', 'Limit school exams'],
+        answer: 'Improve agricultural sustainability',
+        explain_hi: 'सिंचाई और कृषि उन्नयन कार्यक्रमों का मुख्य उद्देश्य कृषि को устойчив बनाना है।',
+        explain_en: 'The objective was to improve agricultural sustainability and productivity.',
+        source: 'Agriculture / irrigation updates',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      },
+      {
+        id: 'KQRO-RAJ-05',
+        month: 'September 2026',
+        hi: 'हरियाली और environmental conservation initiatives में राजस्थान ने किस बात को बढ़ावा दिया?',
+        en: 'What did Rajasthan emphasize in environmental conservation efforts?',
+        options: ['Plantation drives and green coverage', 'Shifting to sea routes', 'Removing all schools', 'Reducing all public parks'],
+        answer: 'Plantation drives and green coverage',
+        explain_hi: 'हरियाली अभियान और हरित क्षेत्र विस्तार को प्रमुखता दी गई।',
+        explain_en: 'Plantation drives and green coverage were the main focus.',
+        source: 'Environment / greening updates',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      },
+      {
+        id: 'KQRO-RAJ-06',
+        month: 'October 2026',
+        hi: 'राजस्थान की developmental reporting में किस प्रकार की initiative अधिक दिखाई देती है?',
+        en: 'Which type of initiative was most visible in Rajasthan development reporting?',
+        options: ['Urban transport expansion only', 'Water, irrigation, education and public schemes together', 'Only budget cuts', 'Only sports advertising'],
+        answer: 'Water, irrigation, education and public schemes together',
+        explain_hi: 'राजस्थान के विकास की रिपोर्टिंग में water, irrigation, education और public schemes का समन्वय सबसे अधिक दिखता है।',
+        explain_en: 'The state’s development narrative often combined water, irrigation, education, and public welfare schemes.',
+        source: 'State governance summaries',
+        source_url: '',
+        verification: 'Source-based summary; verify with official notices before final exam use.',
+        source_file: 'KQRO_Rajasthan_Current_Affairs_Bundled_2026-11-02.json'
+      }
+    ];
+
+    const state = {
+      items: [...BUNDLED],
+      page: 1,
+      pageSize: 6,
+      filters: { search:'', month:'', mode:'all' },
+      answers: {},
+      language: 'both',
+      feedUrl: '',
+      current: null
+    };
+
+    const els = {
+      total: () => document.getElementById('total'),
+      shown: () => document.getElementById('shown'),
+      status: () => document.getElementById('status'),
+      questions: () => document.getElementById('questions'),
+      page: () => document.getElementById('page'),
+      search: () => document.getElementById('search'),
+      month: () => document.getElementById('month'),
+      mode: () => document.getElementById('mode'),
+      language: () => document.getElementById('language'),
+      feedUrl: () => document.getElementById('feedUrl'),
+      prev: () => document.getElementById('prev'),
+      next: () => document.getElementById('next')
+    };
+
+    function getFilteredItems() {
+      const q = state.filters.search.trim().toLowerCase();
+      const month = state.filters.month.trim();
+      const mode = state.filters.mode || 'all';
+
+      return state.items.filter(item => {
+        const matchesText = !q || (item.hi && item.hi.toLowerCase().includes(q)) || (item.en && item.en.toLowerCase().includes(q)) || (item.answer && item.answer.toLowerCase().includes(q));
+        const matchesMonth = !month || item.month === month;
+        const answered = !!state.answers[item.id];
+        const matchesMode = mode === 'all' || (mode === 'answered' && answered) || (mode === 'unanswered' && !answered);
+        return matchesText && matchesMonth && matchesMode;
+      });
+    }
+
+    function renderPagination(totalPages) {
+      const pageNum = Math.min(state.page, totalPages || 1);
+      state.page = pageNum;
+      els().page.textContent = `${pageNum} / ${totalPages || 1}`;
+      els().prev.disabled = pageNum <= 1;
+      els().next.disabled = pageNum >= totalPages;
+    }
+
+    function renderQuestions() {
+      const filtered = getFilteredItems();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+      if (state.page > totalPages) state.page = totalPages;
+      const start = (state.page - 1) * state.pageSize;
+      const pageItems = filtered.slice(start, start + state.pageSize);
+
+      els().total.textContent = state.items.length;
+      els().shown.textContent = filtered.length;
+      els().questions.innerHTML = '';
+
+      if (!pageItems.length) {
+        els().questions.innerHTML = '<div class="qcard"><div class="qtext">No questions available for current filters.</div></div>';
+        renderPagination(totalPages);
+        return;
+      }
+
+      pageItems.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'qcard';
+
+        const answered = state.answers[item.id];
+        const itemNum = start + idx + 1;
+
+        const qText = state.language === 'hi' ? item.hi : state.language === 'en' ? item.en : (item.hi + ' / ' + item.en);
+
+        card.innerHTML = `
+          <div class="qhead">
+            <span>${item.month || 'General'}</span>
+            <span>ID: ${item.id}</span>
+          </div>
+          <div class="qtext">${itemNum}. ${qText}</div>
+          <div class="en">${item.en}</div>
+          ${item.options.map((opt, optIndex) => `
+            <button class="opt ${answered && opt === item.answer ? 'correct' : ''} ${answered && answered.choice === opt && opt !== item.answer ? 'wrong' : ''} ${answered && answered.choice === opt ? 'selected' : ''}" data-id="${item.id}" data-choice="${opt}">
+              ${String.fromCharCode(65 + optIndex)}. ${opt}
+            </button>
+          `).join('')}
+          <div class="feedback ${answered ? 'show' : ''}">
+            <div class="answer">${answered ? (answered.correct ? '✅ Correct' : '❌ Incorrect') : 'Select an answer'}</div>
+            ${answered ? `<div><strong>Correct answer:</strong> ${item.answer}</div>` : ''}
+            ${answered ? `<div class="explain"><strong>Explanation:</strong> ${state.language === 'hi' ? item.explain_hi : state.language === 'en' ? item.explain_en : (item.explain_hi || item.explain_en)}</div>` : ''}
+            <div class="explain"><strong>Source:</strong> ${item.source || 'Official source list'}</div>
+          </div>
+        `;
+
+        card.querySelectorAll('.opt').forEach(btn => {
+          btn.addEventListener('click', () => onAnswer(item.id, btn.dataset.choice));
+        });
+
+        els().questions.appendChild(card);
+      });
+
+      renderPagination(totalPages);
+    }
+
+    function onAnswer(id, choice) {
+      const item = state.items.find(q => q.id === id);
+      if (!item) return;
+      const correct = choice === item.answer;
+      state.answers[id] = { choice, correct };
+      renderQuestions();
+    }
+
+    function applyFilters() {
+      state.filters.search = els().search.value;
+      state.filters.month = els().month.value;
+      state.filters.mode = els().mode.value;
+      state.page = 1;
+      renderQuestions();
+    }
+
+    function readCurrentQuestion() {
+      const filtered = getFilteredItems();
+      if (!filtered.length) return;
+      const item = filtered[(state.page - 1) * state.pageSize] || filtered[0];
+      if (!item) return;
+      const text = state.language === 'hi' ? item.hi : state.language === 'en' ? item.en : `${item.hi} / ${item.en}`;
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = state.language === 'hi' ? 'hi-IN' : state.language === 'en' ? 'en-US' : 'hi-IN';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        els().status.textContent = 'Reading current question aloud...';
+      } else {
+        els().status.textContent = 'Speech synthesis is not supported in this browser.';
+      }
+    }
+
+    function shufflePractice() {
+      for (let i = state.items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.items[i], state.items[j]] = [state.items[j], state.items[i]];
+      }
+      state.page = 1;
+      renderQuestions();
+      els().status.textContent = 'Practice order shuffled.';
+    }
+
+    function clearFilters() {
+      els().search.value = '';
+      els().month.value = '';
+      els().mode.value = 'all';
+      state.filters = { search:'', month:'', mode:'all' };
+      state.page = 1;
+      renderQuestions();
+    }
+
+    function exportJSON() {
+      const dataStr = JSON.stringify(state.items, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kqro-rajasthan-current-affairs.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      els().status.textContent = 'Current data exported as JSON.';
+    }
+
+    function importJSON(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (Array.isArray(data) && data.length) {
+            state.items = data;
+            state.answers = {};
+            state.page = 1;
+            renderQuestions();
+            els().status.textContent = 'Imported JSON data successfully.';
+          } else {
+            els().status.textContent = 'Imported JSON is invalid. Please use an array of current affairs questions.';
+          }
+        } catch (err) {
+          els().status.textContent = 'Failed to parse JSON. Check the file format.';
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetBundledData() {
+      state.items = [...BUNDLED];
+      state.answers = {};
+      state.page = 1;
+      renderQuestions();
+      els().status.textContent = 'Bundled Rajasthan current affairs dataset restored.';
+    }
+
+    function checkFeed() {
+      const url = els().feedUrl.value.trim();
+      if (!url) {
+        els().status.textContent = 'No update URL entered. Offline bundled data remains active.';
+        return;
+      }
+      fetch(url)
+        .then(res => res.ok ? res.json() : Promise.reject(new Error('Fetch failed')))
+        .then(data => {
+          if (Array.isArray(data) && data.length) {
+            state.items = data;
+            state.answers = {};
+            state.page = 1;
+            renderQuestions();
+            els().status.textContent = 'Live feed loaded successfully.';
+          } else {
+            els().status.textContent = 'Feed loaded but the content format was not valid.';
+          }
+        })
+        .catch(() => {
+          els().status.textContent = 'Could not load external feed. Offline bundled data remains active.';
+        });
+    }
+
+    els().search.addEventListener('input', applyFilters);
+    els().month.addEventListener('change', applyFilters);
+    els().mode.addEventListener('change', applyFilters);
+    els().language.addEventListener('change', () => {
+      state.language = els().language.value;
+      renderQuestions();
+    });
+    els().prev.addEventListener('click', () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        renderQuestions();
+      }
+    });
+    els().next.addEventListener('click', () => {
+      const filtered = getFilteredItems();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / state.pageSize));
+      if (state.page < totalPages) {
+        state.page += 1;
+        renderQuestions();
+      }
+    });
+    document.getElementById('shuffle').addEventListener('click', shufflePractice);
+    document.getElementById('clear').addEventListener('click', clearFilters);
+    document.getElementById('speak').addEventListener('click', readCurrentQuestion);
+    document.getElementById('export').addEventListener('click', exportJSON);
+    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('importFile').addEventListener('change', importJSON);
+    document.getElementById('reset').addEventListener('click', resetBundledData);
+    document.getElementById('refresh').addEventListener('click', checkFeed);
+
+    renderQuestions();
+  </script>
+</body>
+</html>

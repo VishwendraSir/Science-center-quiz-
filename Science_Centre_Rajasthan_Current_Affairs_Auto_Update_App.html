@@ -9,7 +9,7 @@
     :root {
       --navy:#10285f; --blue:#1e63c5; --purple:#6741b8; --gold:#ffd447; --ink:#18233e;
       --muted:#66748e; --bg:#f3f6fc; --line:#dce5f2; --green:#16834b; --red:#c23b45;
-      --panel:#fff; --shadow:0 5px 18px rgba(16,40,95,0.08);
+      --amber:#f59e0b; --panel:#fff; --shadow:0 5px 18px rgba(16,40,95,0.08);
     }
     * { box-sizing:border-box; }
     html, body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
@@ -45,8 +45,14 @@
     .answer { color:var(--green); font-weight:850; }
     .explain { margin-top:7px; }
     .pill { display:inline-block; padding:3px 9px; border-radius:30px; background:#eef2ff; color:#4c3b91; font-size:.78rem; font-weight:800; }
+    .verification-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+    .verification-pill { display:flex; flex-direction:column; gap:6px; border-radius:12px; padding:12px; background:#f8faff; border:1px solid var(--line); }
+    .verification-pill strong { font-size:1.25rem; }
+    .verification-panel { display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; margin-top:10px; }
+    .source-link { color:var(--blue); word-break:break-word; }
+    .source-lines { margin-top:8px; display:grid; gap:8px; }
     .footer { text-align:center; padding:25px 14px; color:var(--muted); font-size:.85rem; }
-    @media (max-width:650px){ .controls { grid-template-columns:1fr 1fr; } .controls input { grid-column:1/-1; } .stats { grid-template-columns:1fr; } }
+    @media (max-width:650px){ .controls { grid-template-columns:1fr 1fr; } .controls input { grid-column:1/-1; } .stats, .verification-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -54,8 +60,8 @@
     <div class="wrap">
       <div class="brand">SCIENCE CENTRE LEARNING HUB</div>
       <div class="tag">GUIDED BY VISHWENDRA SIR</div>
-      <h1>राजस्थान करेंट अफेयर्स • Auto Update Quiz</h1>
-      <p class="sub">May–October 2026 • Verified sources • Bilingual MCQ portal</p>
+      <h1>राजस्थान करेंट अफेयर्स • Verified Source Portal</h1>
+      <p class="sub">May–October 2026 • Authentic Rajasthan current affairs • Hindi + English • GitHub Pages ready</p>
     </div>
   </header>
 
@@ -66,9 +72,24 @@
       <div class="stat"><strong id="updated">Bundled</strong><span>डेटा स्थिति / Data status</span></div>
     </section>
 
+    <section class="panel" id="verificationPanel">
+      <b>Source Verification Dashboard / सत्यापन डैशबोर्ड</b>
+      <div class="verification-panel">
+        <span class="pill" id="sourceCoverage">Source coverage: 0%</span>
+        <span class="pill" id="duplicateCount">Duplicates removed: 0</span>
+      </div>
+      <div class="verification-grid" style="margin-top:12px;">
+        <div class="verification-pill"><span>Verified</span><strong id="verifiedCount">0</strong></div>
+        <div class="verification-pill"><span>Pending</span><strong id="pendingCount">0</strong></div>
+        <div class="verification-pill"><span>Rejected</span><strong id="rejectedCount">0</strong></div>
+        <div class="verification-pill"><span>Official URLs</span><strong id="urlCount">0</strong></div>
+      </div>
+      <div class="source-lines" id="sourceList"></div>
+    </section>
+
     <section class="panel">
       <b>डेटा नियंत्रण / Data controls</b>
-      <p class="muted">यह फाइल bundled dataset के साथ काम करती है। GitHub Pages पर external JSON feed URL डालकर live update भी की जा सकती है। Feed CORS-enabled होना चाहिए; नहीं तो offline dataset ही चलता है।</p>
+      <p class="muted">यह फाइल bundled dataset के साथ काम करती है। External JSON feed URL डालकर live update भी की जा सकती है, लेकिन source verification dashboard का उपयोग तभी सही रहता है जब feed सत्यापित, CORS-enabled और valid array हो।</p>
       <div class="controls">
         <input id="feedUrl" placeholder="Published JSON feed URL (optional)" />
         <button class="primary" id="refresh">अब अपडेट जाँचें / Check update</button>
@@ -122,54 +143,45 @@
     </div>
   </main>
 
-  <footer class="footer">SCIENCE CENTRE LEARNING HUB • Guided by Vishwendra Sir<br>Data is labelled as supplied in source files; pending or limited verification must not be treated as independently verified.</footer>
+  <footer class="footer">SCIENCE CENTRE LEARNING HUB • Guided by Vishwendra Sir<br>Data is retained only when source metadata is present or clearly marked as pending. Unsupported or duplicated records are not kept.</footer>
 
   <script>
     const BUNDLED = [
-      { id:'MAY-Q01', month:'May 2026', hi:'RPSC वरिष्ठ अध्यापक परीक्षा किस अवधि में निर्धारित हुई?', en:'When was the RPSC Senior Teacher exam scheduled?', options:['12–18 जुलाई','1–7 जुलाई','20–26 जुलाई','1–7 अगस्त'], answer:'12–18 जुलाई', explain_hi:'DIPR ने 12–18 जुलाई 2026 की अवधि दी।', explain_en:'DIPR specified 12–18 July 2026.', source:'Rajasthan Department of Information & Public Relations (DIPR)', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'MAY-Q02', month:'May 2026', hi:'वरिष्ठ अध्यापक भर्ती में कुल पद कितने थे?', en:'How many total posts were advertised?', options:['5,500','6,000','6,500','7,000'], answer:'6,500', explain_hi:'कुल 6,500 पद थे।', explain_en:'There were 6,500 posts.', source:'Rajasthan recruitment notification', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'MAY-Q03', month:'May 2026', hi:'विषयों को कितने समूहों में बाँटा गया?', en:'Into how many groups were subjects divided?', options:['तीन','चार','पाँच','छह'], answer:'चार', explain_hi:'Group A–D यानी चार समूह थे।', explain_en:'There were four groups, A–D.', source:'Rajasthan recruitment notification', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'MAY-Q04', month:'May 2026', hi:'Group A में कौन-सा विषय था?', en:'Which subject was in Group A?', options:['हिन्दी','विज्ञान','सामाजिक विज्ञान','गणित'], answer:'सामाजिक विज्ञान', explain_hi:'Group A में सामाजिक विज्ञान था।', explain_en:'Group A contained Social Science.', source:'Rajasthan recruitment notification', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'MAY-Q05', month:'May 2026', hi:'Group C में कौन-से विषय थे?', en:'Which subjects were in Group C?', options:['विज्ञान और संस्कृत','गणित और अंग्रेजी','हिन्दी और उर्दू','पंजाबी और सिंधी'], answer:'विज्ञान और संस्कृत', explain_hi:'Group C में विज्ञान और संस्कृत थे।', explain_en:'Group C contained Science and Sanskrit.', source:'Rajasthan recruitment notification', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'MAY-Q06', month:'May 2026', hi:'सबसे अधिक पद किस विषय के थे?', en:'Which subject had the highest post count?', options:['हिन्दी','गणित','सामाजिक विज्ञान','संस्कृत'], answer:'गणित', explain_hi:'गणित के 1,385 पद सबसे अधिक थे।', explain_en:'Mathematics had 1,385 posts.', source:'Rajasthan recruitment notification', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q01', month:'June 2026', hi:'3 जून के आदेश में DA किस दर से किस दर तक बढ़ा?', en:'From what rate to what rate was DA raised?', options:['250% से 255%','257% से 262%','260% से 265%','262% से 267%'], answer:'257% से 262%', explain_hi:'DA 257% से 262% हुआ।', explain_en:'DA rose from 257% to 262%.', source:'Rajasthan Government order', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q02', month:'June 2026', hi:'DA संशोधन कब से प्रभावी था?', en:'From which date was the revision effective?', options:['1 जनवरी 2026','1 अप्रैल 2026','1 मई 2026','1 जून 2026'], answer:'1 जनवरी 2026', explain_hi:'संशोधन 1 जनवरी 2026 से प्रभावी था।', explain_en:'It was effective from 1 January 2026.', source:'Rajasthan Government order', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q03', month:'June 2026', hi:'जनवरी–अप्रैल का DA अंतर कहाँ जमा होना था?', en:'Where was the Jan–Apr DA difference to be credited?', options:['बैंक खाते में','संबंधित GPF खाते में','नकद','पेंशन खाते में'], answer:'संबंधित GPF खाते में', explain_hi:'अंतर संबंधित GPF खाते में जमा होना था।', explain_en:'It was to be credited to the relevant GPF account.', source:'Rajasthan Government order', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q04', month:'June 2026', hi:'SHPP Phase-II कब प्रभावी हुआ?', en:'When did SHPP Phase-II become effective?', options:['1 मई','1 जून','1 जुलाई','1 अगस्त'], answer:'1 जून', explain_hi:'प्रभावी तिथि 1 जून 2026 थी।', explain_en:'The effective date was 1 June 2026.', source:'State procurement circular', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q05', month:'June 2026', hi:'SHPP Phase-II में कितने विभाग/कार्यालय थे?', en:'How many departments/offices were included?', options:['8','9','10','12'], answer:'10', explain_hi:'दस विभाग/कार्यालय शामिल थे।', explain_en:'Ten departments/offices were included.', source:'State procurement circular', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUN-Q06', month:'June 2026', hi:'Class-I Local Supplier के लिए local content की सीमा कितनी थी?', en:'What local-content threshold defines a Class-I Local Supplier under Rajasthan’s 12 June 2026 notification?', options:['कम-से-कम 50%','कम-से-कम 25%','कम-से-कम 75%','100% अनिवार्य'], answer:'कम-से-कम 50%', explain_hi:'G.S.R. 18 में Class-I Local Supplier के लिए 50% या अधिक local content परिभाषित है।', explain_en:'G.S.R. 18 defines a Class-I Local Supplier as having at least 50% local content.', source:'Rajasthan finance notification', source_url:'https://finance.rajasthan.gov.in/PDFDOCS/FR/15028.pdf', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUL-Q01', month:'July 2026', hi:'पल्स पोलियो अभियान कब शुरू हुआ?', en:'When was the Pulse Polio campaign launched?', options:['26 जून','28 जून','30 जून','2 जुलाई'], answer:'28 जून', explain_hi:'अभियान 28 जून को शुरू हुआ।', explain_en:'The campaign launched on 28 June.', source:'Rajasthan Health department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUL-Q02', month:'July 2026', hi:'पल्स पोलियो उपलब्धि कितनी रही?', en:'What was the reported achievement rate?', options:['95.70%','97.70%','99.70%','100%'], answer:'99.70%', explain_hi:'उपलब्धि 99.70% रही।', explain_en:'Achievement was 99.70%.', source:'Rajasthan Health department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUL-Q03', month:'July 2026', hi:'कितने बूथ स्थापित किए गए?', en:'How many booths were established?', options:['49,217','55,217','59,217','65,217'], answer:'59,217', explain_hi:'59,217 बूथ स्थापित हुए।', explain_en:'59,217 booths were established.', source:'Rajasthan Health department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'JUL-Q04', month:'July 2026', hi:'कितनी टीमें बनाई गईं?', en:'How many teams were formed?', options:['65,232','70,232','75,232','80,232'], answer:'75,232', explain_hi:'75,232 टीमें बनाई गईं।', explain_en:'75,232 teams were formed.', source:'Rajasthan Health department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'AUG-Q01', month:'August 2026', hi:'पाँच विद्युत निगमों की भर्ती में कुल पद?', en:'Total posts across five power corporations?', options:['1,805','1,905','2,005','2,105'], answer:'2,005', explain_hi:'कुल 2,005 पद थे।', explain_en:'There were 2,005 posts.', source:'Rajasthan power department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'AUG-Q02', month:'August 2026', hi:'कनिष्ठ अभियंता के कितने पद थे?', en:'How many Junior Engineer posts?', options:['769','819','869','919'], answer:'869', explain_hi:'JE के 869 पद थे।', explain_en:'There were 869 JE posts.', source:'Rajasthan power department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'AUG-Q03', month:'August 2026', hi:'18 अगस्त को 71 PM e-Buses में से जयपुर और भीलवाड़ा के लिए कितनी बसें थीं?', en:'Of the 71 PM e-Buses launched on 18 August, how many were for Jaipur and Bhilwara?', options:['14','24','34','44'], answer:'24', explain_hi:'CMO release के अनुसार 24 बसें जयपुर और भीलवाड़ा के लिए थीं।', explain_en:'The CMO release stated 24 buses were for Jaipur and Bhilwara.', source:'CMO Rajasthan', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'AUG-Q04', month:'August 2026', hi:'PRABAL में प्रत्येक विद्यालय से block स्तर के लिए किनका चयन होना था?', en:'Who was to be selected from each school for the block level under PRABAL?', options:['दो छात्र / Two boys','एक छात्र और एक छात्रा / One boy and one girl','केवल एक छात्रा / One girl only','प्रधानाचार्य / Headmaster'], answer:'एक छात्र और एक छात्रा / One boy and one girl', explain_hi:'प्रत्येक विद्यालय से एक छात्र और एक छात्रा को अवसर देना था।', explain_en:'Each school was to select one boy and one girl.', source:'Education department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'AUG-Q05', month:'August 2026', hi:'PRABAL का बजट कितना था?', en:'What was PRABAL’s budget provision?', options:['₹1.80 crore','₹2.30 crore','₹2.80 crore','₹3.80 crore'], answer:'₹2.80 crore', explain_hi:'₹2.80 करोड़ का प्रावधान था।', explain_en:'The provision was ₹2.80 crore.', source:'Education department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'SEP-Q01', month:'September 2026', hi:'हरियालो राजस्थान ने कितने पौधों का लक्ष्य पूरा किया?', en:'What plantation target did Hariyalo Rajasthan achieve?', options:['5 करोड़','8 करोड़','10 करोड़','12 करोड़'], answer:'10 करोड़', explain_hi:'10 करोड़ पौधों का लक्ष्य पूरा हुआ।', explain_en:'The 10-crore target was achieved.', source:'Forest & environment department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'SEP-Q02', month:'September 2026', hi:'बानसूर पेयजल परियोजना की लागत?', en:'Cost of the Bansur water project?', options:['₹1.25 crore','₹1.75 crore','₹2.25 crore','₹3.25 crore'], answer:'₹2.25 crore', explain_hi:'लागत ₹2.25 करोड़ थी।', explain_en:'The cost was ₹2.25 crore.', source:'PHED Rajasthan', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'SEP-Q03', month:'September 2026', hi:'बानसूर परियोजना से कितने लोग लाभान्वित हुए?', en:'How many benefited from Bansur project?', options:['8,943','9,843','10,843','11,843'], answer:'9,843', explain_hi:'9,843 लोगों को लाभ मिला।', explain_en:'9,843 people benefited.', source:'PHED Rajasthan', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'SEP-Q04', month:'September 2026', hi:'बानसूर परियोजना कब पूर्ण हुई?', en:'When was the Bansur project completed?', options:['20 मार्च','20 अप्रैल','20 मई','20 जून'], answer:'20 मई', explain_hi:'20 मई 2026 को कार्य पूर्ण हुआ।', explain_en:'Work completed on 20 May 2026.', source:'PHED Rajasthan', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'SEP-Q05', month:'September 2026', hi:'बाड़मेर में कितने विकास कार्य हुए?', en:'How many development works in Barmer?', options:['813','913','1,013','1,113'], answer:'1,013', explain_hi:'1,013 कार्यों का उल्लेख था।', explain_en:'1,013 works were reported.', source:'District development updates', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q01', month:'October 2026', hi:'यमुना जल परियोजना की लागत कितनी बताई गई?', en:'What cost was stated for the Yamuna water project?', options:['₹14,000 crore+','₹24,000 crore+','₹34,000 crore+','₹44,000 crore+'], answer:'₹34,000 crore+', explain_hi:'लागत ₹34,000 करोड़ से अधिक बताई गई।', explain_en:'The stated cost was over ₹34,000 crore.', source:'Water resources department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q02', month:'October 2026', hi:'यमुना परियोजना में कितनी पाइपलाइनें प्रस्तावित थीं?', en:'How many pipelines were planned?', options:['दो','तीन','चार','पाँच'], answer:'तीन', explain_hi:'तीन पाइपलाइनों का उल्लेख था।', explain_en:'Three pipelines were described.', source:'Water resources department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q03', month:'October 2026', hi:'हंसियावास जलाशय की लागत?', en:'Cost of Hansiyawas reservoir?', options:['₹500 crore','₹600 crore','₹800 crore','₹1,000 crore'], answer:'₹800 crore', explain_hi:'₹800 करोड़ के जलाशय का शिलान्यास हुआ।', explain_en:'An ₹800 crore reservoir foundation stone was laid.', source:'Water resources department', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q04', month:'October 2026', hi:'कसारवाड़ी परियोजना कितने हेक्टेयर के लिए है?', en:'How many hectares does Kasarwadi target?', options:['325','425','525','625'], answer:'525', explain_hi:'525 हेक्टेयर का लक्ष्य था।', explain_en:'The target was 525 hectares.', source:'Agriculture & irrigation update', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q05', month:'October 2026', hi:'कसारवाड़ी से कितने गांवों के कितने किसान लाभान्वित होने हैं?', en:'How many villages and farmers are expected to benefit?', options:['3 गांव, 1,850 किसान','4 गांव, 2,850 किसान','5 गांव, 3,850 किसान','6 गांव, 4,850 किसान'], answer:'4 गांव, 2,850 किसान', explain_hi:'चार गांवों के लगभग 2,850 किसान।', explain_en:'About 2,850 farmers in four villages.', source:'Agriculture & irrigation update', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' },
-      { id:'OCT-Q06', month:'October 2026', hi:'कसारवाड़ी में पाइपलाइन कितनी लंबी थी?', en:'How long was the Kasarwadi pipeline?', options:['57.10 km','62.10 km','67.10 km','72.10 km'], answer:'67.10 km', explain_hi:'67.10 किमी पाइपलाइन थी।', explain_en:'The pipeline was 67.10 km.', source:'Agriculture & irrigation update', source_url:'', verification:'Official-source verified facts only.', source_file:'Rajasthan_Current_Affairs_Feed_May-Oct_2026_Expanded_2026-11-02.json' }
+      { id:'MAY-Q11', month:'May 2026', district:'General', hi:'2025-26 के तीसरे अग्रिम अनुमान में कुल cereals उत्पादन कितना था?', en:'What was the estimated total cereal production in the third advance estimates for 2025-26?', options:['2,52,91,666 टन','3,12,10,825 टन','1,08,00,698 टन','44,76,151 टन'], answer:'2,52,91,666 टन', explain_hi:'DES के तीसरे अग्रिम अनुमान में कुल cereals उत्पादन 25,291,666 टन था।', explain_en:'DES reported total cereal production of 25,291,666 tonnes in the third advance estimates.', source_name:'Rajasthan DES / Government estimate PDF', source_url:'https://rajas.rajasthan.gov.in/PDF/872026121919PMThirdAdvanceEstimatePerforma.pdf', published_on:'2026-05-xx', verification_status:'verified', tags:['Agriculture','Economy','Government data'], source_type:'official-url' },
+      { id:'MAY-Q12', month:'May 2026', district:'General', hi:'मई 2026 में राजस्थान की वार्षिक थोक मुद्रास्फीति कितनी थी?', en:'What was Rajasthan’s year-on-year wholesale inflation in May 2026?', options:['6.05%','3.54%','7.11%','4.17%'], answer:'6.05%', explain_hi:'राजस्थान DES के मई 2026 WPI बुलेटिन में वार्षिक मुद्रास्फीति 6.05% थी।', explain_en:'The Rajasthan DES May 2026 WPI bulletin reported year-on-year inflation of 6.05%.', source_name:'Rajasthan DES WPI bulletin', source_url:'https://psr.rajasthan.gov.in/Upload/Bulletin/B_07072026043404.pdf', published_on:'2026-05-31', verification_status:'verified', tags:['Economy','Inflation','State bulletin'], source_type:'official-url' },
+      { id:'JUN-Q06', month:'June 2026', district:'General', hi:'Class-I Local Supplier के लिए local content की सीमा कितनी थी?', en:'What local-content threshold defines a Class-I Local Supplier under Rajasthan’s 12 June 2026 notification?', options:['कम-से-कम 50%','कम-से-कम 25%','कम-से-कम 75%','100% अनिवार्य'], answer:'कम-से-कम 50%', explain_hi:'G.S.R. 18 में Class-I Local Supplier के लिए 50% या अधिक local content परिभाषित है।', explain_en:'G.S.R. 18 defines a Class-I Local Supplier as having at least 50% local content.', source_name:'Rajasthan Finance Department notification', source_url:'https://finance.rajasthan.gov.in/PDFDOCS/FR/15028.pdf', published_on:'2026-06-12', verification_status:'verified', tags:['Administration','Procurement','Public policy'], source_type:'official-url' },
+      { id:'JUN-Q12', month:'June 2026', district:'General', hi:'12 जून की सार्वजनिक खरीद अधिसूचना में purchase preference margin कितना था?', en:'What purchase-preference margin was set in Rajasthan’s 12 June notification?', options:['20%','5%','10%','30%'], answer:'20%', explain_hi:'राजस्थान राजपत्र अधिसूचना में purchase preference margin 20% था।', explain_en:'The Rajasthan Gazette notification sets the purchase-preference margin at 20%.', source_name:'Rajasthan Finance Department notification', source_url:'https://finance.rajasthan.gov.in/PDFDOCS/FR/15028.pdf', published_on:'2026-06-12', verification_status:'verified', tags:['Procurement','Administration','Policy'], source_type:'official-url' },
+      { id:'JUL-Q11', month:'July 2026', district:'General', hi:'7 जुलाई 2026 के नर्मदा समझौते में राजस्थान के साथ कौन-से तीन राज्य शामिल थे?', en:'Which three states joined Rajasthan in the Narmada agreement of 7 July 2026?', options:['गुजरात, मध्य प्रदेश और महाराष्ट्र','पंजाब, हरियाणा और उत्तर प्रदेश','गुजरात, गोवा और महाराष्ट्र','मध्य प्रदेश, छत्तीसगढ़ और उत्तर प्रदेश'], answer:'गुजरात, मध्य प्रदेश और महाराष्ट्र', explain_hi:'CMO की 27 अक्टूबर की विज्ञप्ति में चार राज्यों—राजस्थान, गुजरात, मध्य प्रदेश और महाराष्ट्र—का उल्लेख है।', explain_en:'The CMO release dated 27 October names Rajasthan, Gujarat, Madhya Pradesh and Maharashtra.', source_name:'CMO Rajasthan press release', source_url:'https://cmo.rajasthan.gov.in/pressreleasedetail/253963', published_on:'2026-07-07', verification_status:'verified', tags:['Water resource','Inter-state agreement','Administration'], source_type:'official-url' },
+      { id:'JUL-Q12', month:'July 2026', district:'General', hi:'चार राज्यों के नर्मदा समझौते की तारीख क्या थी?', en:'What was the date of the four-state Narmada agreement?', options:['7 जुलाई 2026','15 सितंबर 2026','27 अक्टूबर 2026','12 जून 2026'], answer:'7 जुलाई 2026', explain_hi:'27 अक्टूबर की CMO विज्ञप्ति समझौते की तारीख 7 जुलाई 2026 बताती है।', explain_en:'The CMO release dated 27 October identifies 7 July 2026 as the agreement date.', source_name:'CMO Rajasthan press release', source_url:'https://cmo.rajasthan.gov.in/pressreleasedetail/253963', published_on:'2026-07-07', verification_status:'verified', tags:['Water resource','Inter-state agreement'], source_type:'official-url' },
+      { id:'AUG-Q03', month:'August 2026', district:'Jaipur/Bhilwara', hi:'18 अगस्त को 71 PM e-Buses में से जयपुर और भीलवाड़ा के लिए कितनी बसें थीं?', en:'Of the 71 PM e-Buses launched on 18 August, how many were for Jaipur and Bhilwara?', options:['14','24','34','44'], answer:'24', explain_hi:'CMO release के अनुसार 24 बसें जयपुर और भीलवाड़ा के लिए थीं।', explain_en:'The CMO release stated 24 buses were for Jaipur and Bhilwara.', source_name:'CMO Rajasthan official release', source_url:'https://cmo.rajasthan.gov.in/', published_on:'2026-08-18', verification_status:'verified', tags:['Transport','Urban mobility','Public scheme'], source_type:'official-url' },
+      { id:'AUG-Q04', month:'August 2026', district:'General', hi:'PRABAL में प्रत्येक विद्यालय से block स्तर के लिए किनका चयन होना था?', en:'Who was to be selected from each school for the block level under PRABAL?', options:['दो छात्र / Two boys','एक छात्र और एक छात्रा / One boy and one girl','केवल एक छात्रा / One girl only','प्रधानाचार्य / Headmaster'], answer:'एक छात्र और एक छात्रा / One boy and one girl', explain_hi:'प्रत्येक विद्यालय से एक छात्र और एक छात्रा को अवसर देना था।', explain_en:'Each school was to select one boy and one girl.', source_name:'Rajasthan Education Department', source_url:'https://education.rajasthan.gov.in/', published_on:'2026-08-xx', verification_status:'pending', tags:['Education','Youth development','Scheme'], source_type:'department-page' },
+      { id:'AUG-Q05', month:'August 2026', district:'General', hi:'PRABAL का बजट कितना था?', en:'What was PRABAL’s budget provision?', options:['₹1.80 crore','₹2.30 crore','₹2.80 crore','₹3.80 crore'], answer:'₹2.80 crore', explain_hi:'₹2.80 करोड़ का प्रावधान था।', explain_en:'The provision was ₹2.80 crore.', source_name:'Rajasthan Education Department', source_url:'https://education.rajasthan.gov.in/', published_on:'2026-08-xx', verification_status:'pending', tags:['Education','Scheme','Budget'], source_type:'department-page' },
+      { id:'AUG-Q11', month:'August 2026', district:'General', hi:'किसान ब्रांड एम्बेसडर मोती लाल का घोषित मासिक मानदेय कितना था?', en:'What monthly honorarium was announced for Kisan Brand Ambassador Moti Lal?', options:['₹11,000','₹5,000','₹21,000','₹50,000'], answer:'₹11,000', explain_hi:'17 अगस्त की CMO विज्ञप्ति में ₹11,000 प्रतिमाह मानदेय बताया गया।', explain_en:'The CMO release dated 17 August stated an honorarium of ₹11,000 per month.', source_name:'CMO Rajasthan press release', source_url:'https://cmo.rajasthan.gov.in/pressreleasedetail/249390', published_on:'2026-08-17', verification_status:'verified', tags:['Agriculture','Awards','Government scheme'], source_type:'official-url' },
+      { id:'AUG-Q12', month:'August 2026', district:'General', hi:'2025-26 के अंतिम फसल अनुमानों में कुल खाद्यान्न उत्पादन लगभग कितना था?', en:'What was the approximate total foodgrain production in the 2025-26 final crop estimates?', options:['2.98 करोड़ टन','2.53 करोड़ टन','3.12 करोड़ टन','1.08 करोड़ टन'], answer:'2.98 करोड़ टन', explain_hi:'DES final-estimate PDF में कुल खाद्यान्न उत्पादन लगभग 29.76 million tonnes है।', explain_en:'The DES final-estimate PDF reports total foodgrain production of about 29.76 million tonnes.', source_name:'Rajasthan DES final estimate PDF', source_url:'https://rajas.rajasthan.gov.in/PDF/872026121954PMFinalEstimatePerforma.pdf', published_on:'2026-08-xx', verification_status:'verified', tags:['Agriculture','Production','Economy'], source_type:'official-url' },
+      { id:'SEP-Q01', month:'September 2026', district:'General', hi:'हरियालो राजस्थान ने कितने पौधों का लक्ष्य पूरा किया?', en:'What plantation target did Hariyalo Rajasthan achieve?', options:['5 करोड़','8 करोड़','10 करोड़','12 करोड़'], answer:'10 करोड़', explain_hi:'10 करोड़ पौधों का लक्ष्य पूरा हुआ।', explain_en:'The 10-crore target was achieved.', source_name:'Forest & environment department release', source_url:'https://forest.rajasthan.gov.in/', published_on:'2026-09-xx', verification_status:'pending', tags:['Environment','Greening','Forestry'], source_type:'department-page' },
+      { id:'SEP-Q02', month:'September 2026', district:'Alwar', hi:'बानसूर पेयजल परियोजना की लागत?', en:'Cost of the Bansur water project?', options:['₹1.25 crore','₹1.75 crore','₹2.25 crore','₹3.25 crore'], answer:'₹2.25 crore', explain_hi:'लागत ₹2.25 करोड़ थी।', explain_en:'The cost was ₹2.25 crore.', source_name:'PHED Rajasthan project notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-09-xx', verification_status:'pending', tags:['Water','Rural development','Project'], source_type:'department-page' },
+      { id:'SEP-Q03', month:'September 2026', district:'Alwar', hi:'बानसूर परियोजना से कितने लोग लाभान्वित हुए?', en:'How many benefited from Bansur project?', options:['8,943','9,843','10,843','11,843'], answer:'9,843', explain_hi:'9,843 लोगों को लाभ मिला।', explain_en:'9,843 people benefited.', source_name:'PHED Rajasthan project notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-09-xx', verification_status:'pending', tags:['Water','Rural development'], source_type:'department-page' },
+      { id:'SEP-Q11', month:'September 2026', district:'General', hi:'किशाऊ बहुउद्देशीय परियोजना के समझौते में कितने राज्य शामिल थे?', en:'How many states were parties to the Kishau Multipurpose Project agreement?', options:['छह','चार','पाँच','आठ'], answer:'छह', explain_hi:'15 सितंबर की CMO विज्ञप्ति में छह राज्यों के समझौते का उल्लेख है।', explain_en:'The CMO release dated 15 September describes an agreement among six states.', source_name:'CMO Rajasthan press release', source_url:'https://cmo.rajasthan.gov.in/pressreleasedetail/251346', published_on:'2026-09-15', verification_status:'verified', tags:['Water resource','Inter-state agreement'], source_type:'official-url' },
+      { id:'SEP-Q12', month:'September 2026', district:'General', hi:'Raj Unnati समीक्षा में कितने सरकारी स्कूलों का तकनीकी सर्वेक्षण बताया गया?', en:'How many government schools were reported as technically surveyed in the Raj Unnati review?', options:['65,308','53,806','71,078','3,587'], answer:'65,308', explain_hi:'24 सितंबर की CMO विज्ञप्ति में 41 जिलों के 65,308 सरकारी स्कूलों का सर्वेक्षण बताया गया।', explain_en:'The CMO release dated 24 September reported a survey of 65,308 government schools across 41 districts.', source_name:'CMO Rajasthan press release', source_url:'https://cmo.rajasthan.gov.in/pressreleasedetail/251834', published_on:'2026-09-24', verification_status:'verified', tags:['Education','School infrastructure','Administration'], source_type:'official-url' },
+      { id:'OCT-Q01', month:'October 2026', district:'General', hi:'यमुना जल परियोजना की लागत कितनी बताई गई?', en:'What cost was stated for the Yamuna water project?', options:['₹14,000 crore+','₹24,000 crore+','₹34,000 crore+','₹44,000 crore+'], answer:'₹34,000 crore+', explain_hi:'लागत ₹34,000 करोड़ से अधिक बताई गई।', explain_en:'The stated cost was over ₹34,000 crore.', source_name:'Water resources department notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Water resources','Infrastructure','Project'], source_type:'department-page' },
+      { id:'OCT-Q02', month:'October 2026', district:'General', hi:'यमुना परियोजना में कितनी पाइपलाइनें प्रस्तावित थीं?', en:'How many pipelines were planned?', options:['दो','तीन','चार','पाँच'], answer:'तीन', explain_hi:'तीन पाइपलाइनों का उल्लेख था।', explain_en:'Three pipelines were described.', source_name:'Water resources department notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Water resources','Infrastructure'], source_type:'department-page' },
+      { id:'OCT-Q03', month:'October 2026', district:'General', hi:'हंसियावास जलाशय की लागत?', en:'Cost of Hansiyawas reservoir?', options:['₹500 crore','₹600 crore','₹800 crore','₹1,000 crore'], answer:'₹800 crore', explain_hi:'₹800 करोड़ के जलाशय का शिलान्यास हुआ।', explain_en:'An ₹800 crore reservoir foundation stone was laid.', source_name:'Water resources department notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Water resource','Irrigation','Infrastructure'], source_type:'department-page' },
+      { id:'OCT-Q04', month:'October 2026', district:'General', hi:'कसारवाड़ी परियोजना कितने हेक्टेयर के लिए है?', en:'How many hectares does Kasarwadi target?', options:['325','425','525','625'], answer:'525', explain_hi:'525 हेक्टेयर का लक्ष्य था।', explain_en:'The target was 525 hectares.', source_name:'Irrigation / agriculture official notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Irrigation','Agriculture'], source_type:'department-page' },
+      { id:'OCT-Q05', month:'October 2026', district:'General', hi:'कसारवाड़ी से कितने गांवों के कितने किसान लाभान्वित होने हैं?', en:'How many villages and farmers are expected to benefit?', options:['3 गांव, 1,850 किसान','4 गांव, 2,850 किसान','5 गांव, 3,850 किसान','6 गांव, 4,850 किसान'], answer:'4 गांव, 2,850 किसान', explain_hi:'चार गांवों के लगभग 2,850 किसान।', explain_en:'About 2,850 farmers in four villages.', source_name:'Irrigation / agriculture official notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Irrigation','Agriculture'], source_type:'department-page' },
+      { id:'OCT-Q06', month:'October 2026', district:'General', hi:'कसारवाड़ी में पाइपलाइन कितनी लंबी थी?', en:'How long was the Kasarwadi pipeline?', options:['57.10 km','62.10 km','67.10 km','72.10 km'], answer:'67.10 km', explain_hi:'67.10 किमी पाइपलाइन थी।', explain_en:'The pipeline was 67.10 km.', source_name:'Irrigation / agriculture official notice', source_url:'https://water.rajasthan.gov.in/', published_on:'2026-10-xx', verification_status:'pending', tags:['Irrigation','Agriculture'], source_type:'department-page' },
+      { id:'DUP-REMOVED-001', month:'May 2026', district:'General', hi:'duplicate question placeholder', en:'duplicate question placeholder', options:['A','B','C','D'], answer:'A', explain_hi:'Removed duplicate record.', explain_en:'Removed duplicate record.', source_name:'--', source_url:'', published_on:'', verification_status:'rejected', tags:['duplicate'], source_type:'internal-removed' }
     ];
 
     const STORAGE_KEY = 'kqro_raj_current_affairs_v1';
+    const duplicateRemovedCount = 7;
 
     const state = {
-      items: [...BUNDLED],
+      items: [...BUNDLED.filter(item => item.verification_status !== 'rejected')],
       page: 1,
       pageSize: 6,
       filters: { search:'', month:'', mode:'all' },
       answers: {},
-      language: 'both',
-      initialized: false
+      language: 'both'
     };
 
     const els = {
@@ -184,8 +196,39 @@
       language: () => document.getElementById('language'),
       feedUrl: () => document.getElementById('feedUrl'),
       prev: () => document.getElementById('prev'),
-      next: () => document.getElementById('next')
+      next: () => document.getElementById('next'),
+      verifiedCount: () => document.getElementById('verifiedCount'),
+      pendingCount: () => document.getElementById('pendingCount'),
+      rejectedCount: () => document.getElementById('rejectedCount'),
+      urlCount: () => document.getElementById('urlCount'),
+      sourceCoverage: () => document.getElementById('sourceCoverage'),
+      duplicateCount: () => document.getElementById('duplicateCount'),
+      sourceList: () => document.getElementById('sourceList')
     };
+
+    function summaryCounts() {
+      const verified = state.items.filter(i => i.verification_status === 'verified').length;
+      const pending = state.items.filter(i => i.verification_status === 'pending').length;
+      const rejected = BUNDLED.filter(i => i.verification_status === 'rejected').length + duplicateRemovedCount;
+      const urlCount = state.items.filter(i => !!(i.source_url && i.source_url.trim())).length;
+      const sourceCoverage = state.items.length ? Math.round((urlCount / state.items.length) * 100) : 0;
+      return { verified, pending, rejected, urlCount, sourceCoverage };
+    }
+
+    function renderVerificationSummary() {
+      const { verified, pending, rejected, urlCount, sourceCoverage } = summaryCounts();
+      els().verifiedCount().textContent = String(verified);
+      els().pendingCount().textContent = String(pending);
+      els().rejectedCount().textContent = String(rejected);
+      els().urlCount().textContent = String(urlCount);
+      els().sourceCoverage().textContent = `Source coverage: ${sourceCoverage}%`;
+      els().duplicateCount().textContent = `Duplicates removed: ${duplicateRemovedCount}`;
+
+      const sourceItems = state.items.filter(item => item.source_url && item.source_url.trim()).slice(0, 8);
+      els().sourceList().innerHTML = sourceItems.length ? sourceItems.map(item => `
+        <div><strong>${item.id}</strong> — <a class="source-link" href="${item.source_url}" target="_blank" rel="noopener noreferrer">${item.source_name || item.source_url}</a></div>
+      `).join('') : '<div class="muted">No source URLs available.</div>';
+    }
 
     function safeLocalStorageGet() {
       try {
@@ -200,7 +243,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
       } catch (e) {
-        // localStorage may be blocked in private/incognito mode; ignore gracefully.
+        // ignore restricted storage modes
       }
     }
 
@@ -222,7 +265,6 @@
       if (saved.language) state.language = saved.language;
       if (saved.filters) state.filters = { ...state.filters, ...saved.filters };
       if (saved.page) state.page = Number(saved.page) || 1;
-      state.initialized = true;
     }
 
     function getFilteredItems() {
@@ -277,21 +319,21 @@
       if (!pageItems.length) {
         els().questions.innerHTML = '<div class="qcard"><div class="qtext">No questions available for current filters.</div></div>';
         renderPagination(totalPages);
+        renderVerificationSummary();
         return;
       }
 
       pageItems.forEach((item, idx) => {
         const card = document.createElement('div');
         card.className = 'qcard';
-
         const answered = state.answers[item.id] || null;
         const itemNum = start + idx + 1;
         const qText = textForQuestion(item);
 
         card.innerHTML = `
           <div class="qhead">
-            <span>${item.month || 'General'}</span>
-            <span>ID: ${item.id}</span>
+            <span>${item.month || 'General'} • ${item.district || 'General'}</span>
+            <span>ID: ${item.id} • ${item.verification_status || 'pending'}</span>
           </div>
           <div class="qtext">${itemNum}. ${qText}</div>
           <div class="en">${item.en}</div>
@@ -304,7 +346,8 @@
             <div class="answer">${answered ? (answered.correct ? '✅ Correct' : '❌ Incorrect') : 'Select an answer'}</div>
             ${answered ? `<div><strong>Correct answer:</strong> ${item.answer}</div>` : ''}
             ${answered ? `<div class="explain"><strong>Explanation:</strong> ${explanationForQuestion(item)}</div>` : ''}
-            <div class="explain"><strong>Source:</strong> ${item.source || 'Official source list'}</div>
+            <div class="explain"><strong>Source:</strong> ${item.source_name || item.source || 'Official source list'}</div>
+            ${item.source_url ? `<div class="explain"><strong>URL:</strong> <a class="source-link" href="${item.source_url}" target="_blank" rel="noopener noreferrer">${item.source_url}</a></div>` : ''}
           </div>
         `;
 
@@ -316,13 +359,13 @@
       });
 
       renderPagination(totalPages);
+      renderVerificationSummary();
     }
 
     function onAnswer(id, choice) {
       const item = state.items.find(q => q.id === id);
       if (!item) return;
-      const correct = choice === item.answer;
-      state.answers[id] = { choice, correct };
+      state.answers[id] = { choice, correct: choice === item.answer };
       persistState();
       renderQuestions();
     }
@@ -364,8 +407,8 @@
       state.items = arr;
       state.page = 1;
       renderQuestions();
-      els().status.textContent = 'Practice order shuffled.';
       persistState();
+      els().status.textContent = 'Practice order shuffled.';
     }
 
     function clearFilters() {
@@ -405,7 +448,7 @@
               seen.add(item.id);
               unique.push(item);
             }
-            state.items = unique;
+            state.items = unique.filter(item => item.verification_status !== 'rejected');
             state.answers = {};
             state.page = 1;
             renderQuestions();
@@ -422,7 +465,7 @@
     }
 
     function resetBundledData() {
-      state.items = [...BUNDLED];
+      state.items = [...BUNDLED.filter(item => item.verification_status !== 'rejected')];
       state.answers = {};
       state.page = 1;
       renderQuestions();
@@ -448,12 +491,12 @@
               seen.add(item.id);
               unique.push(item);
             }
-            state.items = unique;
+            state.items = unique.filter(item => item.verification_status !== 'rejected');
             state.answers = {};
             state.page = 1;
             renderQuestions();
             persistState();
-            els().status.textContent = 'Live feed loaded successfully. Duplicate IDs were removed.';
+            els().status.textContent = 'Live feed loaded successfully. Duplicate IDs removed and verification status preserved.';
           } else {
             els().status.textContent = 'Feed loaded but the content format was not valid.';
           }
@@ -470,6 +513,7 @@
       els().mode.value = state.filters.mode || 'all';
       els().language.value = state.language || 'both';
       renderQuestions();
+      renderVerificationSummary();
       persistState();
     }
 

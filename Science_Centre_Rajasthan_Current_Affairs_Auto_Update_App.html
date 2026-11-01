@@ -53,8 +53,10 @@
     .source-lines { margin-top:8px; display:grid; gap:8px; }
     .tiny-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
     .mini { font-size:.79rem; padding:7px 9px; }
+    .summary-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+    .summary-card { padding:12px; border:1px solid var(--line); border-radius:12px; background:#f8fbff; }
     .footer { text-align:center; padding:25px 14px; color:var(--muted); font-size:.85rem; }
-    @media (max-width:650px){ .controls { grid-template-columns:1fr 1fr; } .controls input { grid-column:1/-1; } .stats, .verification-grid { grid-template-columns:1fr; } }
+    @media (max-width:650px){ .controls { grid-template-columns:1fr 1fr; } .controls input { grid-column:1/-1; } .stats, .verification-grid, .summary-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -87,6 +89,11 @@
         <div class="verification-pill"><span>Official URLs</span><strong id="urlCount">0</strong></div>
       </div>
       <div class="source-lines" id="sourceList"></div>
+    </section>
+
+    <section class="panel">
+      <b>Inventory / सूची दृश्य</b>
+      <div class="summary-grid" id="inventoryList"></div>
     </section>
 
     <section class="panel">
@@ -195,6 +202,24 @@
         source_type:'government-page'
       },
       {
+        id:'RJ-2026-05-03',
+        month:'May 2026',
+        district:'General',
+        hi:'राजस्थान की सरकारी सूचनाओं और पदाधिकारियों के आधिकारिक नोटिस का प्राथमिक राज्य पोर्टल कौन-सा है?',
+        en:'Which portal is the primary official state portal for Rajasthan government notices and updates?',
+        options:['rajasthan.gov.in','gktoday.in','iasnetwork.com','timesofindia.com'],
+        answer:'rajasthan.gov.in',
+        explain_hi:'राजस्थान सरकार का आधिकारिक राज्य पोर्टल rajasthan.gov.in है, जहाँ विभागीय सूचना, नोटिस और घोषणाएँ उपलब्ध होती हैं।',
+        explain_en:'The official Rajasthan state portal is rajasthan.gov.in, where departmental notices and announcements are published.',
+        source_name:'Rajasthan State Portal',
+        source_url:'https://rajasthan.gov.in/',
+        published_on:'2026-05-01',
+        verification_status:'pending',
+        verification_note:'This is a source-structure question tied to the official government portal and remains pending pending direct content verification for a specific notice.',
+        tags:['Official portal','Source tracking','Government portal'],
+        source_type:'official-homepage'
+      },
+      {
         id:'RJ-2026-06-01',
         month:'June 2026',
         district:'General',
@@ -229,6 +254,24 @@
         verification_note:'Official published PDF is directly cited and is suitable as a verification source for this item.',
         tags:['Procurement','Finance','Policy'],
         source_type:'official-pdf'
+      },
+      {
+        id:'RJ-2026-06-04',
+        month:'June 2026',
+        district:'General',
+        hi:'राजस्थान में public procurement और local supplier notification का मुख्य विभाग कौन-सा है?',
+        en:'Which Rajasthan department typically publishes procurement and local supplier notifications?',
+        options:['Finance Department','Transport Department','Education Department','Tourism Department'],
+        answer:'Finance Department',
+        explain_hi:'राजस्थान की सार्वजनिक खरीद, procurement notifications और local supplier नीतियाँ मुख्यतः finance department द्वारा जारी की जाती हैं।',
+        explain_en:'Rajasthan procurement and local supplier notifications are typically issued by the Finance Department.',
+        source_name:'Rajasthan Finance Department',
+        source_url:'https://finance.rajasthan.gov.in/',
+        published_on:'2026-06-15',
+        verification_status:'pending',
+        verification_note:'This is a structurally verified source-based governance question. It remains pending because it should be cross-checked against a specific departmental notice before promotion.',
+        tags:['Finance','Procurement','Policy'],
+        source_type:'government-page'
       },
       {
         id:'RJ-2026-07-01',
@@ -321,6 +364,24 @@
         source_type:'government-page'
       },
       {
+        id:'RJ-2026-08-04',
+        month:'August 2026',
+        district:'General',
+        hi:'राजस्थान के सीएम कार्यालय द्वारा जारी की जाने वाली आधिकारिक घोषणाओं की मुख्य वेबसाइट कौन-सी है?',
+        en:'Which official website hosts the press releases and announcements of the Rajasthan Chief Minister’s Office?',
+        options:['cmo.rajasthan.gov.in','rpsc.rajasthan.gov.in','hindi.news.com','judiciary.rajasthan.gov.in'],
+        answer:'cmo.rajasthan.gov.in',
+        explain_hi:'CMO राजस्थान की आधिकारिक वेबसाइट cmo.rajasthan.gov.in है, जहाँ प्रेस रिलीज़ और घोषणाएँ जारी की जाती हैं।',
+        explain_en:'The official CMO Rajasthan website is cmo.rajasthan.gov.in, where press releases and announcements are published.',
+        source_name:'CMO Rajasthan official website',
+        source_url:'https://cmo.rajasthan.gov.in/',
+        published_on:'2026-08-20',
+        verification_status:'pending',
+        verification_note:'This is a source-structure question tied to the official chief minister’s office portal. It stays pending because the specific press release details must be matched before a fact claim is promoted.',
+        tags:['CMO','Press release','Government portal'],
+        source_type:'official-homepage'
+      },
+      {
         id:'RJ-2026-09-01',
         month:'September 2026',
         district:'General',
@@ -385,7 +446,7 @@
         explain_hi:'लागत ₹34,000 करोड़ से अधिक बताई गई।',
         explain_en:'The stated cost was over ₹34,000 crore.',
         source_name:'Water resources department notice',
-        source_url:'https://water.rajasthan.gov.in/',
+        source_url:'https://waterresources.rajasthan.gov.in/',
         published_on:'2026-10-xx',
         verification_status:'pending',
         verification_note:'This item should remain pending until a direct water resources notice is confirmed and linked.',
@@ -403,7 +464,7 @@
         explain_hi:'525 हेक्टेयर का लक्ष्य था।',
         explain_en:'The target was 525 hectares.',
         source_name:'Irrigation / agriculture official notice',
-        source_url:'https://water.rajasthan.gov.in/',
+        source_url:'https://waterresources.rajasthan.gov.in/',
         published_on:'2026-10-xx',
         verification_status:'pending',
         verification_note:'This is an irrigation project fact that should stay pending until the exact official notice is retrieved.',
@@ -421,7 +482,7 @@
         explain_hi:'67.10 किमी पाइपलाइन थी।',
         explain_en:'The pipeline was 67.10 km.',
         source_name:'Irrigation / agriculture official notice',
-        source_url:'https://water.rajasthan.gov.in/',
+        source_url:'https://waterresources.rajasthan.gov.in/',
         published_on:'2026-10-xx',
         verification_status:'pending',
         verification_note:'Exact official notice required before approving this irrigation metric.',
@@ -445,6 +506,24 @@
         verification_note:'This item is directly linked to an official CMO release and may be retained in the verified group.',
         tags:['Inter-state agreement','Water resources'],
         source_type:'official-press-release'
+      },
+      {
+        id:'RJ-2026-10-05',
+        month:'October 2026',
+        district:'General',
+        hi:'राजस्थान में जल-संसाधन और irrigation project notices का मुख्य विभाग कौन-सा है?',
+        en:'Which department is primarily responsible for Rajasthan irrigation and water-resource project notices?',
+        options:['Water Resources Department','Revenue Department','Transport Department','Mining Department'],
+        answer:'Water Resources Department',
+        explain_hi:'जल परियोजनाओं, irrigation project notices और water resource announcements का मुख्य विभाग Water Resources Department होता है।',
+        explain_en:'Irrigation and water-resource project notices in Rajasthan are primarily handled by the Water Resources Department.',
+        source_name:'Rajasthan Water Resources Department',
+        source_url:'https://waterresources.rajasthan.gov.in/',
+        published_on:'2026-10-15',
+        verification_status:'pending',
+        verification_note:'This is a source-based governance question and should remain pending until a specific project notice is linked in the evidence chain.',
+        tags:['Water Resources','Irrigation','Government department'],
+        source_type:'government-page'
       },
       {
         id:'RJ-2026-06-03',
@@ -516,7 +595,8 @@
       urlCount: () => document.getElementById('urlCount'),
       sourceCoverage: () => document.getElementById('sourceCoverage'),
       duplicateCount: () => document.getElementById('duplicateCount'),
-      sourceList: () => document.getElementById('sourceList')
+      sourceList: () => document.getElementById('sourceList'),
+      inventoryList: () => document.getElementById('inventoryList')
     };
 
     function normalizeQuestionText(value) {
@@ -603,6 +683,28 @@
       `).join('') : '<div class="muted">No source URLs available.</div>';
     }
 
+    function renderInventorySummary() {
+      const monthMap = {};
+      for (const item of state.items) {
+        const m = item.month || 'Unknown';
+        if (!monthMap[m]) monthMap[m] = { count: 0, verified: 0, pending: 0, rejected: 0 };
+        monthMap[m].count += 1;
+        if (item.verification_status === 'verified') monthMap[m].verified += 1;
+        if (item.verification_status === 'pending') monthMap[m].pending += 1;
+        if (item.verification_status === 'rejected') monthMap[m].rejected += 1;
+      }
+      const sortedMonths = Object.entries(monthMap).sort((a, b) => a[0].localeCompare(b[0]));
+      els().inventoryList().innerHTML = sortedMonths.map(([month, info]) => `
+        <div class="summary-card">
+          <strong>${month}</strong><br>
+          Total: ${info.count}<br>
+          Verified: ${info.verified}<br>
+          Pending: ${info.pending}<br>
+          Rejected: ${info.rejected}
+        </div>
+      `).join('');
+    }
+
     function getFilteredItems() {
       const q = (state.filters.search || '').trim().toLowerCase();
       const month = (state.filters.month || '').trim();
@@ -653,6 +755,7 @@
       persistState();
       renderQuestions();
       renderVerificationSummary();
+      renderInventorySummary();
     }
 
     function editItem(id) {
@@ -679,6 +782,7 @@
       persistState();
       renderQuestions();
       renderVerificationSummary();
+      renderInventorySummary();
       els().status.textContent = 'Question updated and saved locally.';
     }
 
@@ -697,6 +801,7 @@
         els().questions.innerHTML = '<div class="qcard"><div class="qtext">No questions available for current filters.</div></div>';
         renderPagination(totalPages);
         renderVerificationSummary();
+        renderInventorySummary();
         return;
       }
 
@@ -753,6 +858,7 @@
 
       renderPagination(totalPages);
       renderVerificationSummary();
+      renderInventorySummary();
     }
 
     function onAnswer(id, choice) {
@@ -867,6 +973,7 @@
           state.answers = {};
           state.page = 1;
           renderQuestions();
+          renderInventorySummary();
           persistState();
           els().status.textContent = `Imported JSON successfully. ${deduped.removed} duplicate records removed.`;
         } catch (e) {
@@ -882,6 +989,7 @@
       state.answers = {};
       state.page = 1;
       renderQuestions();
+      renderInventorySummary();
       persistState();
       els().status.textContent = 'Bundled Rajasthan current affairs dataset restored.';
     }
@@ -924,6 +1032,7 @@
           state.answers = {};
           state.page = 1;
           renderQuestions();
+          renderInventorySummary();
           persistState();
           els().status.textContent = `Live feed loaded successfully. ${deduped.removed} duplicate records removed.`;
         })
@@ -943,6 +1052,7 @@
       els().language.value = state.language || 'both';
       renderQuestions();
       renderVerificationSummary();
+      renderInventorySummary();
       persistState();
     }
 
